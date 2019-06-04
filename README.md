@@ -49,7 +49,7 @@ We emphasize the advantage of our approach over manually defining templates for 
 
 It would be time consuming to manually define so many variations for every feature that may or may not be mentioned in a headline, and it would be even more difficult to ensure that the resulting headline would be grammatically correct.  Our algorithm avoids these issues by using historical game headlines as templates instead of trying to define our own.
 
-By choosing relatively high weights for important features, we make games with differing values for those features far apart.  This can guarantee that the nearest neighbour of a game where the home team won, for example, will not be a game where the home team lost.  If we use that neighbour's headline as a template for the new game, it will at least be correct about whether the home or road team won.  Features that are less likely to affect a game's headline, such as the number of points scored by the top scorer on the winning team, are given less weight (although it is not unusual for the names of the scoring leaders to appear in game summary headlines).
+By choosing relatively high weights for important features, we make games with differing values for those features far apart.  This can guarantee, for example, that the nearest neighbour of a game where the home team won will not be a game where the home team lost.  If we use that neighbour's headline as a template for the new game, it will at least be correct about whether the home or road team won.  Features that are less likely to affect a game's headline, such as the number of points scored by the top scorer on the winning team, are given less weight.
 
 Limitations
 -----------
@@ -65,7 +65,7 @@ It would be hard to use the old game's headline as a template for a headline for
 Description of files:
 =====================
 
-The main program is **nba_headline_generator.py**.  The next most important files are the **games.py** and **features.py** modules, where we define the classes *Game* and *Feature* respectively.  Game objects are how we model games and Feature objects are what we use to extract feature vectors for those games.  The programs **espn_id_finder.py** and **dataframe_builder.py** are short programs to gather and raw data for offline usage.
+The main program is **nba_headline_generator.py**.  The next most important files are the **games.py** and **features.py** modules, where we define the classes *Game* and *Feature* respectively.  Game objects are how we model games and Feature objects are what we use to extract feature vectors for those games.  The programs **espn_id_finder.py** and **dataframe_builder.py** are short programs to gather and save raw data for offline usage.
 
 
 nba_headline_generator.py
