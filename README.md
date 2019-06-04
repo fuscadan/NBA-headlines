@@ -29,7 +29,7 @@ Currently only the first step has been implemented, and I am not sure if I will 
 Main Libraries Used
 -------------------
 
-The closest historical game is found using the KNeighborsClassifier module of the SciKit-Learn library.  The training set (i.e. the collection of historical game data) is built by scraping espn.com using BeautifulSoup4.  We remark that this is a somewhat degenerate use of the KNN algorithm, since we treat each training example (historical game) as having its own unique target label (its headline).  Nevertheless, I find this project to be an informative exercise in using the KNeighborsClassifier, StandardScaler, DictVectorizer, and Pipeline modules.  
+The closest historical game is found using the KNeighborsClassifier module of the SciKit-Learn library.  The training set (i.e. the collection of historical game data) is built by scraping espn.com using BeautifulSoup4.  We remark that this is a somewhat degenerate use of the KNN algorithm, since we treat each training example (historical game) as having its own unique target label (its headline).  Nevertheless, I find this project to be an informative exercise in using SciKit-Learn's .neighbors, .preprocessing, .feature_extraction, and .pipeline modules.
 
 
 
