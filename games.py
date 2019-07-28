@@ -56,6 +56,8 @@ import ast
 http = urllib3.PoolManager()
 game_summary_root = 'http://www.espn.com/nba/game?gameId='
 
+urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
+
 class Game:
     
     def __init__(self,game_id,df_path=None):
@@ -74,6 +76,16 @@ class Game:
             '''
     
             self.headline = soup.select('.top-stories__story-header h1')[0].text
+            
+            
+            '''
+                The playoff round of the current game is mentioned in a line of
+                text above the box score. We pull that round here.
+            '''
+            #find the tag with the relevant text
+            round_tag = soup.select('.game-details')[0]
+            #parse the text and keep only the playoff round
+            self.round = round_tag.text.split(' - ')[0]
             
             
             '''
@@ -223,8 +235,9 @@ class Game:
             game_row = df.loc[game_id]
             
             self.headline = game_row['headline']
+            self.round = game_row['round']
             self.winner = game_row['winner']            
-            self.names = game_row['names']
+            self.names = ast.literal_eval(game_row['names'])
             self.scores = ast.literal_eval(game_row['scores'])
             self.quarters = game_row['quarters']
             self.pts = ast.literal_eval(game_row['pts'])
@@ -239,16 +252,17 @@ class Game:
     #to pass to a pandas dataframe as a row
     def to_dict(self):
         return {'headline' : [self.headline] ,
-                                'winner' : [self.winner] , 
-                                'names' : [self.names] , 
-                                'scores' : [self.scores] ,
-                                'quarters' : [self.quarters] ,
-                                'pts' : [self.pts] , 
-                                'reb' : [self.reb] ,
-                                'ast' : [self.ast] ,
-                                'n_game' : [self.n_game] ,
-                                'home_wins' : [self.home_wins] ,
-                                'away_wins' : [self.away_wins] }
+                'round' : [self.round],
+                'winner' : [self.winner] , 
+                'names' : [self.names] , 
+                'scores' : [self.scores] ,
+                'quarters' : [self.quarters] ,
+                'pts' : [self.pts] , 
+                'reb' : [self.reb] ,
+                'ast' : [self.ast] ,
+                'n_game' : [self.n_game] ,
+                'home_wins' : [self.home_wins] ,
+                'away_wins' : [self.away_wins] }
 
 
 
@@ -258,6 +272,7 @@ if __name__ == '__main__':
     
     game = Game(game_id, 'raw_data.csv')
     print('headline: ', game.headline)
+    print('\n round: ', game.round)
     print('\n winning team: ', game.winner)
     print('\n team names: \n', game.names)
     print('\n number of quarters played: ', game.quarters)

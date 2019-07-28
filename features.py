@@ -81,7 +81,7 @@ quarters = Feature('quarters', 10, fnc_1)
 def fnc_2(game):
     return abs(game.scores['away'][0] - game.scores['home'][0])
 
-point_difference = Feature('point_difference', 7, fnc_2)
+point_difference = Feature('point_difference', 5, fnc_2)
 
 
 def fnc_3(game):
@@ -90,7 +90,7 @@ def fnc_3(game):
     else:
         return game.scores['away'][1] - game.scores['home'][1]
     
-q1_difference = Feature('q1_difference', 3, fnc_3)
+q1_difference = Feature('q1_difference', 2, fnc_3)
 
 
 def fnc_4(game):
@@ -99,7 +99,7 @@ def fnc_4(game):
     else:
         return game.scores['away'][2] - game.scores['home'][2]
     
-q2_difference = Feature('q2_difference', 3, fnc_4)
+q2_difference = Feature('q2_difference', 2, fnc_4)
 
 
 def fnc_5(game):
@@ -108,7 +108,7 @@ def fnc_5(game):
     else:
         return game.scores['away'][3] - game.scores['home'][3]
     
-q3_difference = Feature('q3_difference', 4, fnc_5)
+q3_difference = Feature('q3_difference', 3, fnc_5)
 
 
 def fnc_6(game):
@@ -117,7 +117,7 @@ def fnc_6(game):
     else:
         return game.scores['away'][4] - game.scores['home'][4]
     
-q4_difference = Feature('q4_difference', 5, fnc_6)
+q4_difference = Feature('q4_difference', 4, fnc_6)
 
 
 def fnc_7(game):
@@ -150,13 +150,36 @@ pts_leader_difference = Feature('pts_leader_difference', 4, fnc_9)
 def fnc_10(game):
     return game.home_wins
 
-home_wins = Feature('home_wins',10, fnc_10)
+home_wins = Feature('home_wins',12, fnc_10)
 
 
 def fnc_11(game):
     return game.away_wins
 
-away_wins = Feature('away_wins',10,fnc_11)
+away_wins = Feature('away_wins',12,fnc_11)
+
+
+def fnc_12(game):
+    if 'EAST' in game.round:
+        return 1
+    elif 'WEST' in game.round:
+        return -1
+    else:
+        return 0
+
+conference = Feature('conference',5,fnc_12)
+
+def fnc_13(game):
+    if 'NBA' in game.round:
+        return 5
+    elif 'SEMIFINALS' in game.round:
+        return 1
+    elif 'FINALS' in game.round:
+        return 3
+    else:
+        return 0
+    
+playoff_round = Feature('playoff_round',5,fnc_13)
 
 
 #maybe include the triple double feature later

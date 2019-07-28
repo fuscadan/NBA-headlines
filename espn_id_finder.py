@@ -29,39 +29,43 @@ schedule_root = 'http://www.espn.com/nba/team/schedule/_/name/'
 team_abbreviations = ['atl', 'bos', 'bkn', 'cle', 'cha', 'chi', 'dal', 'den', 'det', 'gs', 'hou', 'ind', 'lac', 'lal', 'mem', 'mia', 'mil', 'min', 'no', 'ny', 'okc', 'orl', 'phi', 'phx', 'por', 'sac', 'sa', 'tor', 'utah', 'wsh']
 season_type_names = {1 : 'preseason', 2 : 'regular_season' , 3 : 'postseason'} 
 
-#open up a connection pool
-http = urllib3.PoolManager()
+id_file_path = 'espn_game_ids_{0}_{1}-{2}.txt'.format(season_type_names[season_type],str(start_year),str(end_year))
 
-#open up a text file to write the game IDs into
-with open('espn_game_ids_{0}_{1}-{2}.txt'.format(season_type_names[season_type],str(start_year),str(end_year)) , 'w') as id_file:
+if __name__ == '__main__':
     
-    for year in range(start_year,end_year+1):
+    #open up a connection pool
+    http = urllib3.PoolManager()
+    
+    #open up a text file to write the game IDs into
+    with open(id_file_path, 'w') as id_file:
         
-        for team in team_abbreviations:
-            #get the html from the appropriate url and parse it into a tree 
-            #called 'soup'
-            url = schedule_root + team + '/season/' + str(year) + '/seasontype/' + str(season_type)  
-            r = http.request('GET', url)
-            soup = BeautifulSoup(r.data, 'html.parser')
+        for year in range(start_year,end_year+1):
             
-            #each 'a' tag in the tag with class 'ml4' links to a game in the 
-            #season
-            number_of_games_in_season = len(soup.select('.ml4 a'))
-            
-            for i in range(number_of_games_in_season):
-                #find the tag with the href link to the i^th game
-                game_link_tag = soup.select('.ml4 a')[i]
-                #find the tag with the "vs" or "@" string indicating whether 
-                #the game was at home or not
-                location_tag = game_link_tag.parent.parent.previous_sibling
+            for team in team_abbreviations:
+                #get the html from the appropriate url and parse it into a tree 
+                #called 'soup'
+                url = schedule_root + team + '/season/' + str(year) + '/seasontype/' + str(season_type)  
+                r = http.request('GET', url)
+                soup = BeautifulSoup(r.data, 'html.parser')
                 
-                #grab the game ID as an integer
-                game_id = game_link_tag.get('href')[-9:]
-                #grab the 'vs' or '@' string
-                game_location = location_tag.select('.pr2')[0].text
+                #each 'a' tag in the tag with class 'ml4' links to a game in the 
+                #season
+                number_of_games_in_season = len(soup.select('.ml4 a'))
                 
-                if game_location == 'vs':
-                    id_file.write(game_id + '\n')
+                for i in range(number_of_games_in_season):
+                    #find the tag with the href link to the i^th game
+                    game_link_tag = soup.select('.ml4 a')[i]
+                    #find the tag with the "vs" or "@" string indicating whether 
+                    #the game was at home or not
+                    location_tag = game_link_tag.parent.parent.previous_sibling
                     
-
-
+                    #grab the game ID as an integer
+                    game_id = game_link_tag.get('href')[-9:]
+                    #grab the 'vs' or '@' string
+                    game_location = location_tag.select('.pr2')[0].text
+                    
+                    if game_location == 'vs':
+                        id_file.write(game_id + '\n')
+                        
+    
+    
