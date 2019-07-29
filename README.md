@@ -7,24 +7,27 @@ Project outline:
 
 The goal is to write a program that takes some basic data from an NBA playoff game as an input and returns a short headline for that game.  This idea was humourously suggested to me by [Jordan Bell](https://www.linkedin.com/in/jordanbell2357/).  Rather than defining a headline template (or list of templates) that we can fill in with the inputted data, we instead match the given game data with the "closest" historical playoff game, and use the headline of that historical game as our template.  As long as the definition of "distance" between two sets of game data is reasonable, this algorithm should usually give us a headline template that is appropriate for the new game.
 
-Consider the following example.  The Toronto Raptors [recently beat](http://www.espn.com/nba/game?gameId=401131843) the Milwaukee Bucks in Toronto by about 20 points to tie their playoff series 2-2.  It turns out that in 2009, The Lakers and the Nuggets [played a game](http://www.espn.com/nba/game?gameId=290525007) with similar statistics. 
+Consider the following example.  The Toronto Raptors [recently beat](https://www.espn.com/nba/game?gameId=401129105) the Philadelphia 76ers in a close Game 7.  It turns out that last year in 2018, The Cavaliers and the Pacers [played a game](https://www.espn.com/nba/game?gameId=401029433) with similar statistics. 
 
-The ESPN headline for the Lakers-Nuggets game was 
-> Nuggets rout Lakers to even West finals at 2-2  
+The ESPN headline for the Cavs-Pacers game was 
+> 7th heaven: LeBron carries Cavaliers past Pacers in Game 7
 
 The template of this headline is 
-> (home_team) rout (away_team) to even (playoff_round) at 2-2  
+> 7th heaven: (home_pts_leader) carries (home_team) past (away_team) in Game 7
 
 Filling in this template with information from the Raptors-Bucks game, we end up generating the headline
-> Raptors rout Bucks to even East Finals at 2-2
+> 7th heaven: Leonard carries Raptors past 76ers in Game 7
 
-Note that the real headline posted on ESPN is "Lowry has 25, Raptors rout Bucks 120-102 to even East finals".
+Another example: Consider [Game 1 of the 2019 Eastern Conference Finals](https://www.espn.com/nba/game?gameId=401131840), a game in which Toronto lost to the Milwaukee Bucks after collapsing in the 4th quarter.  Our algorithm generates the headline
+> Bucks control Raptors, lead 1-0 after dominant 4th
+
+The template for this headline comes from [Game 1 of the 2011 Eastern Conference Finals](https://www.espn.com/nba/game?gameId=310515004), where the winning Chicago Bulls also had a strong 4th quarter.
+> Bulls control Heat, lead 1-0 after dominant 4th
 
 In summary, our algorithm 
 1. identifies the nearest neigbouring historical game and extracts its headline
 2. finds and replaces old team names, scores, and so on with their new counterparts.
 
-Currently only the first step has been implemented, and I am not sure if I will ever implement the second.  This find/replace portion of the script does not exercise any web scrapping or machine learning techniques and coding it may not be a worthwhile use of my time.
 
 Main Libraries Used
 -------------------
@@ -65,14 +68,18 @@ It would be hard to use the old game's headline as a template for a headline for
 Description of files:
 =====================
 
-The main program is **nba_headline_generator.py**.  The next most important files are the **games.py** and **features.py** modules, where we define the classes *Game* and *Feature* respectively.  Game objects are how we model games and Feature objects are what we use to extract feature vectors for those games.  The programs **espn_id_finder.py** and **dataframe_builder.py** are short programs to gather and save raw data for offline usage.
+The main program is **nba_headline_generator.py**.  The KNN model is trained in **knn_model.py**, and the model is stored as **headline_knn.joblib**. The next most important files are the **games.py** and **features.py** modules, where we define the classes *Game* and *Feature* respectively.  Game objects are how we model games and Feature objects are what we use to extract feature vectors for those games.  The programs **espn_id_finder.py** and **dataframe_builder.py** are short programs to gather and save raw data for offline usage.
 
 
 nba_headline_generator.py
 -------------------------
 
-This program finds the nearest historical game to a given new game, as measured by a custom-defined metric, and returns the historical game's headline.  This is done using SciKit-Learn's KNeighborsClassifer.  The raw training data (historical games and their headlines) are loaded from a .csv file.  For each game, a feature vector is generated and stored as a dictionary, and the game's headline is stored as its label.  All such feature vectors and labels are gathered together and stored as a lists `X` and `y` respectively.  This list `X` is preprocessed using a dictionary vectorizer and a standardizer.  Finally, a K-nearest-neighbours model is trained on `X` and `y` using `K = 1` and a weighted Minkowski metric.  Predicting the label of the new game returns the headline of the new game's nearest neighbour.
+This program uses the model trained in knn_model.py to find a historical game that is similar to a given game.  The headline of the historical game is used as a template for the headline we generate for the new game.  Numerous find/replace operations are applied to the template to update historical team names, scores, and so on to the context of the new game.
 
+knn_model.py
+------------
+
+This program trains a KNN model to find nearest historical game to a given new game, as measured by a custom-defined metric. This is done using SciKit-Learn's KNeighborsClassifer.  The raw training data (historical games and their headlines) are loaded from a .csv file.  For each game, a feature vector is generated and stored as a dictionary, and the game's headline is stored as its label.  All such feature vectors and labels are gathered together and stored as a lists `X` and `y` respectively.  This list `X` is preprocessed using a dictionary vectorizer and a standardizer.  Finally, a K-nearest-neighbours model is trained on `X` and `y` using `K = 1` and a weighted Minkowski metric.  Predicting the label of the new game returns the headline of the new game's nearest neighbour.
 
 games.py
 --------
