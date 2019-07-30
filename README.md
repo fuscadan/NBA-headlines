@@ -29,6 +29,20 @@ In summary, our algorithm
 2. finds and replaces old team names, scores, and so on with their new counterparts.
 
 
+Usage:
+======
+
+1. Find the ESPN Game Summary page for an NBA playoff game from 2019 or later, and note its 9-digit Game ID. For example,
+
+	> https://www.espn.com/nba/game?gameId=401131840
+
+	has the game ID `401131840`.  Basic game information for this game will be scraped from this URL and a headline for the game will be generated.
+
+2. Run nba_headline_generator.py with the command `-id <Game Id>`.  Optional commands are `-t` to display the template headline and template game ID, and `-m <relative path to model file>` to use a different model file other than `headline_knn.joblib`. Example:
+	
+	`nba_headline_generator.py -id 401131840 -t`
+
+
 Main Libraries Used
 -------------------
 
