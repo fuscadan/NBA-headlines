@@ -30,7 +30,7 @@ In summary, our algorithm
 
 
 Usage:
-======
+------
 
 1. Find the ESPN Game Summary page for an NBA playoff game from 2019 or later, and note its 9-digit Game ID. For example,
 
